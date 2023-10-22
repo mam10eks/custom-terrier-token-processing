@@ -15,17 +15,24 @@ public class StanfordLemmatizer extends StemmerTermPipeline {
 
 	private  StanfordCoreNLP pipeline = pipeline();
 	
+	public StanfordLemmatizer() {
+		super();
+	}
+
+	public StanfordLemmatizer(TermPipeline next) {
+		super(next);
+	}
+	
 	@Override
 	public synchronized String stem(String s) {
 		Annotation t = new Annotation(s);
 		this.pipeline.annotate(t);
 
-		List<CoreMap> sentences = t.get(SentencesAnnotation.class);
-        for(CoreMap sentence: sentences) {
-            for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
-               return token.get(LemmaAnnotation.class);
-            }
-        }
+		for(CoreMap sentence: t.get(SentencesAnnotation.class)) {
+			for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
+				return token.get(LemmaAnnotation.class);
+			}
+		}
 
 		return null;
 	}
